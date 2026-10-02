@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses - Student Study Planner</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Study Planner</h1>
+        <p>Manage your courses and stay organized.</p>
+    </header>
+
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/courses">Courses</a>
+        <a href="/assignments">Assignments</a>
+        <a href="/tasks">Tasks</a>
+        <a href="/notes">Notes</a>
+    </nav>
+
+    <main>
+
+        <section>
+            <h2>My Courses</h2>
+            <p>View and manage your current courses.</p>
+
+            <form>
+                <h3>Add a Course</h3>
+
+                <label for="courseName">Course Name</label>
+                <input type="text" id="courseName" name="courseName" placeholder="Example: Cloud Computing">
+
+                <label for="courseCode">Course Code</label>
+                <input type="text" id="courseCode" name="courseCode" placeholder="Example: CST-323">
+
+                <label for="instructor">Instructor</label>
+                <input type="text" id="instructor" name="instructor" placeholder="Enter instructor name">
+
+                <button type="submit">Add Course</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Course List</h2>
+
+            <div>
+                <h3>Example Course</h3>
+                <p><strong>Course:</strong> Cloud Computing</p>
+                <p><strong>Course Code:</strong> CST-323</p>
+                <p><strong>Instructor:</strong> Example Instructor</p>
+
+                <button type="button">Edit Course</button>
+                <button type="button">Delete Course</button>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

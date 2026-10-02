@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments - Student Study Planner</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Study Planner</h1>
+        <p>Manage your assignments and keep track of deadlines.</p>
+    </header>
+
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/courses">Courses</a>
+        <a href="/assignments">Assignments</a>
+        <a href="/tasks">Tasks</a>
+        <a href="/notes">Notes</a>
+    </nav>
+
+    <main>
+
+        <section>
+            <h2>My Assignments</h2>
+            <p>View and manage your upcoming and current assignments.</p>
+
+            <form>
+                <h3>Add an Assignment</h3>
+
+                <label for="assignmentName">Assignment Name</label>
+                <input type="text" id="assignmentName" name="assignmentName" placeholder="Example: Cloud Computing Discussion">
+
+                <label for="course">Course</label>
+                <input type="text" id="course" name="course" placeholder="Example: CST-323">
+
+                <label for="dueDate">Due Date</label>
+                <input type="date" id="dueDate" name="dueDate">
+
+                <label for="category">Category</label>
+                <input type="text" id="category" name="category" placeholder="Example: Homework">
+
+                <button type="submit">Add Assignment</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Assignment List</h2>
+
+            <div>
+                <h3>Example Assignment</h3>
+                <p><strong>Assignment:</strong> Cloud Computing Discussion</p>
+                <p><strong>Course:</strong> CST-323</p>
+                <p><strong>Due Date:</strong> October 10, 2026</p>
+                <p><strong>Category:</strong> Homework</p>
+
+                <button type="button">Edit Assignment</button>
+                <button type="button">Delete Assignment</button>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

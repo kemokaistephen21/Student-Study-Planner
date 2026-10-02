@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Tasks - Student Study Planner</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Study Planner</h1>
+        <p>Manage your study tasks and stay on top of your work.</p>
+    </header>
+
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/courses">Courses</a>
+        <a href="/assignments">Assignments</a>
+        <a href="/tasks">Tasks</a>
+        <a href="/notes">Notes</a>
+    </nav>
+
+    <main>
+
+        <section>
+            <h2>My Study Tasks</h2>
+            <p>View and manage the tasks you need to complete for your courses.</p>
+
+            <form>
+                <h3>Add a Study Task</h3>
+
+                <label for="taskName">Task Name</label>
+                <input type="text" id="taskName" name="taskName" placeholder="Example: Study Chapter 5">
+
+                <label for="course">Course</label>
+                <input type="text" id="course" name="course" placeholder="Example: CST-323">
+
+                <label for="dueDate">Due Date</label>
+                <input type="date" id="dueDate" name="dueDate">
+
+                <label for="category">Category</label>
+                <input type="text" id="category" name="category" placeholder="Example: Studying">
+
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" placeholder="Enter details about this study task"></textarea>
+
+                <button type="submit">Add Study Task</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Task List</h2>
+
+            <div>
+                <h3>Example Study Task</h3>
+                <p><strong>Task:</strong> Study Chapter 5</p>
+                <p><strong>Course:</strong> CST-323</p>
+                <p><strong>Due Date:</strong> October 8, 2026</p>
+                <p><strong>Category:</strong> Studying</p>
+                <p><strong>Description:</strong> Review the chapter material and prepare notes.</p>
+
+                <button type="button">Edit Task</button>
+                <button type="button">Delete Task</button>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

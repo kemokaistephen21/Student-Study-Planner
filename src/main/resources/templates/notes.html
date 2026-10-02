@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes - Student Study Planner</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Study Planner</h1>
+        <p>Manage your study notes and keep important information organized.</p>
+    </header>
+
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/courses">Courses</a>
+        <a href="/assignments">Assignments</a>
+        <a href="/tasks">Tasks</a>
+        <a href="/notes">Notes</a>
+    </nav>
+
+    <main>
+
+        <section>
+            <h2>My Notes</h2>
+            <p>View and manage your study notes for your courses.</p>
+
+            <form>
+                <h3>Add a Study Note</h3>
+
+                <label for="noteTitle">Note Title</label>
+                <input type="text" id="noteTitle" name="noteTitle" placeholder="Example: Chapter 5 Notes">
+
+                <label for="course">Course</label>
+                <input type="text" id="course" name="course" placeholder="Example: CST-323">
+
+                <label for="category">Category</label>
+                <input type="text" id="category" name="category" placeholder="Example: Class Notes">
+
+                <label for="noteContent">Note Content</label>
+                <textarea id="noteContent" name="noteContent" rows="6" placeholder="Enter your study notes here"></textarea>
+
+                <button type="submit">Add Study Note</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Notes List</h2>
+
+            <div>
+                <h3>Example Study Note</h3>
+                <p><strong>Note Title:</strong> Chapter 5 Notes</p>
+                <p><strong>Course:</strong> CST-323</p>
+                <p><strong>Category:</strong> Class Notes</p>
+                <p><strong>Note Content:</strong> Review the main concepts from this chapter and record important information.</p>
+
+                <button type="button">Edit Note</button>
+                <button type="button">Delete Note</button>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
