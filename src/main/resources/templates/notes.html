@@ -49,18 +49,17 @@
         </section>
 
         <section>
-            <h2>Notes List</h2>
+			<h2 th:if="${notes.empty}">No Notes available</h2>
+			<h2 th:if="${not #lists.isEmpty(notes)}">Notes List</h2>
+			<div th:each="note : ${notes}">
+				<h3 th:text="${note.title}">Example Study Note</h3>
+				<p><strong>Course: </strong><span th:text="${note.courseName}">CST-323</span></p>
+				<p><strong>Category: </strong><span th:text="${note.category}">Example Instructor</span></p>
+				<p><strong>Note Content: </strong><span th:text="${note.content}">Review the main concepts from this chapter and record important information.</span></p>
 
-            <div>
-                <h3>Example Study Note</h3>
-                <p><strong>Note Title:</strong> Chapter 5 Notes</p>
-                <p><strong>Course:</strong> CST-323</p>
-                <p><strong>Category:</strong> Class Notes</p>
-                <p><strong>Note Content:</strong> Review the main concepts from this chapter and record important information.</p>
-
-                <button type="button">Edit Note</button>
-                <button type="button">Delete Note</button>
-            </div>
+				<button type="button">Edit Note</button>
+				<button type="button">Delete Note</button>
+			</div>
 
         </section>
 

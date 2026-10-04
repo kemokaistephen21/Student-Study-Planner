@@ -46,17 +46,16 @@
         </section>
 
         <section>
-            <h2>Course List</h2>
+			<h2 th:if="${courses.empty}">No Courses available</h2>
+			<h2 th:if="${not #lists.isEmpty(courses)}">Course List</h2>
+			<div th:each="course : ${courses}">
+				<h3 th:text="${course.name}">Example Course</h3>
+				<p><strong>Course Code: </strong><span th:text="${course.code}">CST-323</span></p>
+				<p><strong>Instructor: </strong><span th:text="${course.instructor}">Example Instructor</span></p>
 
-            <div>
-                <h3>Example Course</h3>
-                <p><strong>Course:</strong> Cloud Computing</p>
-                <p><strong>Course Code:</strong> CST-323</p>
-                <p><strong>Instructor:</strong> Example Instructor</p>
-
-                <button type="button">Edit Course</button>
-                <button type="button">Delete Course</button>
-            </div>
+				<button type="button">Edit Course</button>
+				<button type="button">Delete Course</button>
+			</div>
 
         </section>
 
