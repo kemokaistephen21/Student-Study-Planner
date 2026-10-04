@@ -67,8 +67,8 @@ public class NoteEntity {
 		return content;
 	}
 
-	public void setContent(String productContent) {
-		this.content = productContent;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public Long getCourseId() {
