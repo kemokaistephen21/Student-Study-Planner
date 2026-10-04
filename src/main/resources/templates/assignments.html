@@ -29,14 +29,14 @@
             <h2>My Assignments</h2>
             <p>View and manage your upcoming and current assignments.</p>
 
-            <form>
+            <form action="/assignments" method="post">
                 <h3>Add an Assignment</h3>
 
                 <label for="assignmentName">Assignment Name</label>
                 <input type="text" id="assignmentName" name="assignmentName" placeholder="Example: Cloud Computing Discussion">
 
                 <label for="course">Course</label>
-                <input type="text" id="course" name="course" placeholder="Example: CST-323">
+                <input type="text" id="course" name="course" placeholder="Example: Cloud Computing">
 
                 <label for="dueDate">Due Date</label>
                 <input type="date" id="dueDate" name="dueDate">
@@ -51,15 +51,36 @@
 		<section>
 			<h2 th:if="${assignments.empty}">No Assignments available</h2>
 			<h2 th:if="${not #lists.isEmpty(assignments)}">Assignment List</h2>
-				<div th:each="assignment : ${assignments}">
-					<h3 th:text="${assignment.name}">Example Assignment</h3>
-					<p><strong>Course: </strong><span th:text="${assignment.courseName}">CST-323</span></p>
-					<p><strong>Due Date: </strong><span th:text="${assignment.dueDate}">October 10, 2026</span></p>
-					<p><strong>Category: </strong><span th:text="${assignment.category}">Homework</span></p>
 
-					<button type="button">Edit Assignment</button>
-					<button type="button">Delete Assignment</button>
-				</div>
+			<div th:each="assignment : ${assignments}">
+				<h3 th:text="${assignment.name}">Example Assignment</h3>
+				<p><strong>Course: </strong><span th:text="${assignment.courseName}">Cloud Computing</span></p>
+				<p><strong>Due Date: </strong><span th:text="${assignment.dueDate}">October 10, 2026</span></p>
+				<p><strong>Category: </strong><span th:text="${assignment.category}">Homework</span></p>
+
+				<form action="/assignments/update" method="post">
+					<input type="hidden" name="id" th:value="${assignment.id}">
+
+					<label>Assignment Name</label>
+					<input type="text" name="assignmentName" th:value="${assignment.name}">
+
+					<label>Course</label>
+					<input type="text" name="course" th:value="${assignment.courseName}">
+
+					<label>Due Date</label>
+					<input type="date" name="dueDate" th:value="${#temporals.format(assignment.dueDate, 'yyyy-MM-dd')}">
+
+					<label>Category</label>
+					<input type="text" name="category" th:value="${assignment.category}">
+
+					<button type="submit">Edit Assignment</button>
+				</form>
+
+				<form action="/assignments/delete" method="post">
+					<input type="hidden" name="id" th:value="${assignment.id}">
+					<button type="submit">Delete Assignment</button>
+				</form>
+			</div>
 		</section>
 
     </main>

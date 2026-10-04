@@ -29,14 +29,14 @@
             <h2>My Notes</h2>
             <p>View and manage your study notes for your courses.</p>
 
-            <form>
+            <form action="/notes" method="post">
                 <h3>Add a Study Note</h3>
 
                 <label for="noteTitle">Note Title</label>
                 <input type="text" id="noteTitle" name="noteTitle" placeholder="Example: Chapter 5 Notes">
 
                 <label for="course">Course</label>
-                <input type="text" id="course" name="course" placeholder="Example: CST-323">
+                <input type="text" id="course" name="course" placeholder="Example: Cloud Computing">
 
                 <label for="category">Category</label>
                 <input type="text" id="category" name="category" placeholder="Example: Class Notes">
@@ -49,17 +49,53 @@
         </section>
 
         <section>
-			<h2 th:if="${notes.empty}">No Notes available</h2>
-			<h2 th:if="${not #lists.isEmpty(notes)}">Notes List</h2>
-			<div th:each="note : ${notes}">
-				<h3 th:text="${note.title}">Example Study Note</h3>
-				<p><strong>Course: </strong><span th:text="${note.courseName}">CST-323</span></p>
-				<p><strong>Category: </strong><span th:text="${note.category}">Example Instructor</span></p>
-				<p><strong>Note Content: </strong><span th:text="${note.content}">Review the main concepts from this chapter and record important information.</span></p>
+            <h2 th:if="${notes.empty}">No Notes available</h2>
+            <h2 th:if="${not #lists.isEmpty(notes)}">Notes List</h2>
 
-				<button type="button">Edit Note</button>
-				<button type="button">Delete Note</button>
-			</div>
+            <div th:each="note : ${notes}">
+                <h3 th:text="${note.title}">Example Study Note</h3>
+
+                <p>
+                    <strong>Course: </strong>
+                    <span th:text="${note.courseName}">CST-323</span>
+                </p>
+
+                <p>
+                    <strong>Category: </strong>
+                    <span th:text="${note.category}">Example Instructor</span>
+                </p>
+
+                <p>
+                    <strong>Note Content: </strong>
+                    <span th:text="${note.content}">Review the main concepts from this chapter and record important information.</span>
+                </p>
+
+                <!-- Edit Note -->
+                <form action="/notes/update" method="post">
+                    <input type="hidden" name="id" th:value="${note.id}">
+
+                    <label>Note Title</label>
+                    <input type="text" name="title" th:value="${note.title}">
+
+                    <label>Course</label>
+                    <input type="text" name="course" th:value="${note.courseName}">
+
+                    <label>Category</label>
+                    <input type="text" name="category" th:value="${note.category}">
+
+                    <label>Note Content</label>
+                    <textarea name="content" rows="6" th:text="${note.content}"></textarea>
+
+                    <button type="submit">Edit Note</button>
+                </form>
+
+                <!-- Delete Note -->
+                <form action="/notes/delete" method="post">
+                    <input type="hidden" name="id" th:value="${note.id}">
+
+                    <button type="submit">Delete Note</button>
+                </form>
+            </div>
 
         </section>
 
@@ -67,3 +103,4 @@
 
 </body>
 </html>
+

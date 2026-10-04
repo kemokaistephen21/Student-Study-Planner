@@ -1,4 +1,4 @@
-* {
+{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -97,6 +97,23 @@ button {
 }
 
 button:hover {
+    background-color: #555555;
+}
+
+/* Dashboard Add Buttons */
+.add-button {
+    display: inline-block;
+    background-color: #333333;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    margin: 15px 0;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.add-button:hover {
     background-color: #555555;
 }
 

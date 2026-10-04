@@ -29,7 +29,7 @@
             <h2>My Study Tasks</h2>
             <p>View and manage the tasks you need to complete for your courses.</p>
 
-            <form>
+            <form action="/tasks" method="post">
                 <h3>Add a Study Task</h3>
 
                 <label for="taskName">Task Name</label>
@@ -52,19 +52,62 @@
         </section>
 
         <section>
-			<h2 th:if="${tasks.empty}">No Tasks available</h2>
-			<h2 th:if="${not #lists.isEmpty(tasks)}">Task List</h2>
-			
-			<div th:each="task : ${tasks}">
-				<h3 th:text="${task.name}">Example Study Task</h3>
-				<p><strong>Course: </strong><span th:text="${task.courseName}">CST-323</span></p>
-				<p><strong>Due Date: </strong><span th:text="${task.dueDate}">October 8, 2026</span></p>
-				<p><strong>Category: </strong><span th:text="${task.category}">Studying</span></p>
-				<p><strong>Description: </strong><span th:text="${task.description}">Review the chapter material and prepare notes.</span></p>
+            <h2 th:if="${tasks.empty}">No Tasks available</h2>
+            <h2 th:if="${not #lists.isEmpty(tasks)}">Task List</h2>
+            
+            <div th:each="task : ${tasks}">
+                <h3 th:text="${task.name}">Example Study Task</h3>
 
-				<button type="button">Edit Task</button>
-				<button type="button">Delete Task</button>
-			</div>
+                <p>
+                    <strong>Course: </strong>
+                    <span th:text="${task.courseName}">CST-323</span>
+                </p>
+
+                <p>
+                    <strong>Due Date: </strong>
+                    <span th:text="${task.dueDate}">October 8, 2026</span>
+                </p>
+
+                <p>
+                    <strong>Category: </strong>
+                    <span th:text="${task.category}">Studying</span>
+                </p>
+
+                <p>
+                    <strong>Description: </strong>
+                    <span th:text="${task.description}">Review the chapter material and prepare notes.</span>
+                </p>
+
+                <!-- Edit Task -->
+                <form action="/tasks/update" method="post">
+                    <input type="hidden" name="id" th:value="${task.id}">
+
+                    <label>Task Name</label>
+                    <input type="text" name="taskName" th:value="${task.name}">
+
+                    <label>Course</label>
+                    <input type="text" name="course" th:value="${task.courseName}">
+
+                    <label>Due Date</label>
+                    <input type="date" name="dueDate"
+                           th:value="${#temporals.format(task.dueDate, 'yyyy-MM-dd')}">
+
+                    <label>Category</label>
+                    <input type="text" name="category" th:value="${task.category}">
+
+                    <label>Description</label>
+                    <textarea name="description" rows="4" th:text="${task.description}"></textarea>
+
+                    <button type="submit">Edit Task</button>
+                </form>
+
+                <!-- Delete Task -->
+                <form action="/tasks/delete" method="post">
+                    <input type="hidden" name="id" th:value="${task.id}">
+
+                    <button type="submit">Delete Task</button>
+                </form>
+            </div>
 
         </section>
 

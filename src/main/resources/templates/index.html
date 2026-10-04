@@ -32,45 +32,45 @@
 
         <section>
             <h2>My Courses</h2>
-            <button type="button">+ Add Course</button>
+            <a href="/courses" class="add-button">+ Add Course</a>
 
             <div>
                 <h3>My Courses</h3>
                 <p th:if="${courses.empty}">Your courses will appear here.</p>
-				<p th:each="course : ${courses}" th:text="${course.name}">Example Course</p>
+                <p th:each="course : ${courses}" th:text="${course.name}">Example Course</p>
             </div>
         </section>
 
         <section>
             <h2>Upcoming Assignments</h2>
-            <button type="button">+ Add Assignment</button>
+            <a href="/assignments" class="add-button">+ Add Assignment</a>
 
             <div>
                 <h3>Upcoming Assignments</h3>
                 <p th:if="${assignments.empty}">Your upcoming assignments will appear here.</p>
-				<p th:each="assignment : ${assignments}" th:text="${assignment.name}">Example Course</p>
-			</div>
+                <p th:each="assignment : ${assignments}" th:text="${assignment.name}">Example Course</p>
+            </div>
         </section>
 
         <section>
             <h2>Study Tasks</h2>
-            <button type="button">+ Add Task</button>
+            <a href="/tasks" class="add-button">+ Add Task</a>
 
             <div>
                 <h3>My Study Tasks</h3>
                 <p th:if="${tasks.empty}">Your study tasks will appear here.</p>
-				<p th:each="task : ${tasks}" th:text="${task.name}">Example Course</p>
+                <p th:each="task : ${tasks}" th:text="${task.name}">Example Course</p>
             </div>
         </section>
 
         <section>
             <h2>Notes</h2>
-            <button type="button">+ Add Note</button>
+            <a href="/notes" class="add-button">+ Add Note</a>
 
             <div>
                 <h3>My Notes</h3>
                 <p th:if="${notes.empty}">Your study notes will appear here.</p>
-				<p th:each="note : ${notes}" th:text="${note.title}">Example Course</p>
+                <p th:each="note : ${notes}" th:text="${note.title}">Example Course</p>
             </div>
         </section>
 
