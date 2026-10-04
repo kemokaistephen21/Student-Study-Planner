@@ -47,22 +47,20 @@
                 <button type="submit">Add Assignment</button>
             </form>
         </section>
+		
+		<section>
+			<h2 th:if="${assignments.empty}">No Assignments available</h2>
+			<h2 th:if="${not #lists.isEmpty(assignments)}">Assignment List</h2>
+				<div th:each="assignment : ${assignments}">
+					<h3 th:text="${assignment.name}">Example Assignment</h3>
+					<p><strong>Course: </strong><span th:text="${assignment.courseName}">CST-323</span></p>
+					<p><strong>Due Date: </strong><span th:text="${assignment.dueDate}">October 10, 2026</span></p>
+					<p><strong>Category: </strong><span th:text="${assignment.category}">Homework</span></p>
 
-        <section>
-            <h2>Assignment List</h2>
-
-            <div>
-                <h3>Example Assignment</h3>
-                <p><strong>Assignment:</strong> Cloud Computing Discussion</p>
-                <p><strong>Course:</strong> CST-323</p>
-                <p><strong>Due Date:</strong> October 10, 2026</p>
-                <p><strong>Category:</strong> Homework</p>
-
-                <button type="button">Edit Assignment</button>
-                <button type="button">Delete Assignment</button>
-            </div>
-
-        </section>
+					<button type="button">Edit Assignment</button>
+					<button type="button">Delete Assignment</button>
+				</div>
+		</section>
 
     </main>
 

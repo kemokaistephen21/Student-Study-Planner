@@ -52,19 +52,19 @@
         </section>
 
         <section>
-            <h2>Task List</h2>
+			<h2 th:if="${tasks.empty}">No Tasks available</h2>
+			<h2 th:if="${not #lists.isEmpty(tasks)}">Task List</h2>
+			
+			<div th:each="task : ${tasks}">
+				<h3 th:text="${task.name}">Example Study Task</h3>
+				<p><strong>Course: </strong><span th:text="${task.courseName}">CST-323</span></p>
+				<p><strong>Due Date: </strong><span th:text="${task.dueDate}">October 8, 2026</span></p>
+				<p><strong>Category: </strong><span th:text="${task.category}">Studying</span></p>
+				<p><strong>Description: </strong><span th:text="${task.description}">Review the chapter material and prepare notes.</span></p>
 
-            <div>
-                <h3>Example Study Task</h3>
-                <p><strong>Task:</strong> Study Chapter 5</p>
-                <p><strong>Course:</strong> CST-323</p>
-                <p><strong>Due Date:</strong> October 8, 2026</p>
-                <p><strong>Category:</strong> Studying</p>
-                <p><strong>Description:</strong> Review the chapter material and prepare notes.</p>
-
-                <button type="button">Edit Task</button>
-                <button type="button">Delete Task</button>
-            </div>
+				<button type="button">Edit Task</button>
+				<button type="button">Delete Task</button>
+			</div>
 
         </section>
 
