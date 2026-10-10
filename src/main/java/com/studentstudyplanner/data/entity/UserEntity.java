@@ -1,3 +1,4 @@
+
 package com.studentstudyplanner.data.entity;
 
 import jakarta.persistence.Column;
@@ -8,20 +9,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "users")
 public class UserEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-	
-	@Column(name = "USERNAME")
+
+    @Column(name = "name")
     private String username;
-	
-	@Column(name = "PASSWORD")
+
+    @Column(name = "password")
     private String password;
 
     public UserEntity() {
-    	this.id = (long) 0;
     }
 
     public UserEntity(Long id, String username, String password) {
@@ -30,7 +32,6 @@ public class UserEntity {
         this.password = password;
     }
 
-    // Getters and setters...
     public Long getId() {
         return id;
     }
