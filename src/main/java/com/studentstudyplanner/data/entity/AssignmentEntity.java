@@ -1,6 +1,6 @@
 package com.studentstudyplanner.data.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +23,7 @@ public class AssignmentEntity {
 	String category;
 
 	@Column(name = "DUEDATE")
-	LocalDateTime dueDate;
+	LocalDate dueDate;
 	
 	@Column(name = "FINISHED")
 	boolean finished;
@@ -35,12 +35,12 @@ public class AssignmentEntity {
 		this.id = (long) 0;
 		this.name = "";
 		this.category = "";
-		this.dueDate = LocalDateTime.now();
+		this.dueDate = LocalDate.now();
 		this.finished = false;
 		this.courseId = (long) 0;
 	}
 	
-	public AssignmentEntity(Long id, String name, String category, LocalDateTime dueDate,
+	public AssignmentEntity(Long id, String name, String category, LocalDate dueDate,
 			boolean finished, Long courseId) {
 		this.id = id;
 		this.name = name;
@@ -74,11 +74,11 @@ public class AssignmentEntity {
 		this.category = category;
 	}
 
-	public LocalDateTime getDueDate() {
+	public LocalDate getDueDate() {
 		return dueDate;
 	}
 
-	public void setDueDate(LocalDateTime dueDate) {
+	public void setDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
 	}
 	

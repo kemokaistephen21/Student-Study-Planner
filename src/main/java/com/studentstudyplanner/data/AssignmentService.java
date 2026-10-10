@@ -4,7 +4,6 @@ import java.util.*;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -105,8 +104,8 @@ public class AssignmentService implements DataAccessInterface<AssignmentEntity> 
 		}
 	}
 	
-	public AssignmentEntity ModelToEntity(AssignmentModel model) {
-		List<CourseEntity> coursesResults = coursesService.findByName(model.getCourseName());
+	public AssignmentEntity ModelToEntity(AssignmentModel model, Long userId) {
+		List<CourseEntity> coursesResults = coursesService.findByNameAndUserId(model.getCourseName(), userId);
 		
 		if (coursesResults.isEmpty())
 			return null;
@@ -124,6 +123,6 @@ public class AssignmentService implements DataAccessInterface<AssignmentEntity> 
 			return null;
 		
 		return new AssignmentModel(entity.getId(), entity.getName(), entity.getCategory(), entity.getDueDate(),
-				entity.isFinished(), ce.getCode());
+				entity.isFinished(), ce.getName());
 	}
 }

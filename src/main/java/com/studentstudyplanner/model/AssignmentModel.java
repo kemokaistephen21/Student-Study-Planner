@@ -1,6 +1,8 @@
 package com.studentstudyplanner.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.validation.constraints.*;
 
@@ -14,7 +16,8 @@ public class AssignmentModel {
 	private String category;
 	
 	@NotNull(message="Due date is required")
-	private LocalDateTime dueDate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate dueDate;
 	
 	@NotNull(message="Finished state is required")
 	boolean finished;
@@ -24,7 +27,7 @@ public class AssignmentModel {
 	
 	public AssignmentModel(Long id, @NotBlank(message = "Name is required") String name,
 			@NotBlank(message = "Category is required") String category,
-			@NotNull(message = "Due date is required") LocalDateTime dueDate,
+			@NotNull(message = "Due date is required") LocalDate dueDate,
 			@NotNull(message = "Finished state is required") boolean finished,
 			@NotBlank(message = "Course Name is required") String courseName) {
 		super();
@@ -34,6 +37,14 @@ public class AssignmentModel {
 		this.dueDate = dueDate;
 		this.finished = finished;
 		this.courseName = courseName;
+	}
+
+	public AssignmentModel() {
+		this.name = "";
+		this.category = "";
+		this.dueDate = LocalDate.now();
+		this.finished = false;
+		this.courseName = "";
 	}
 
 	public Long getId() {
@@ -60,11 +71,11 @@ public class AssignmentModel {
 		this.category = category;
 	}
 
-	public LocalDateTime getDueDate() {
+	public LocalDate getDueDate() {
 		return dueDate;
 	}
 
-	public void setDueDate(LocalDateTime dueDate) {
+	public void setDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
 	}
 

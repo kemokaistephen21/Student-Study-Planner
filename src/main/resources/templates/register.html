@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Study Planner</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Study Planner</h1>
+        <p>Stay organized and keep track of your academic responsibilities.</p>
+    </header>
+
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/courses">Courses</a>
+        <a href="/assignments">Assignments</a>
+        <a href="/tasks">Tasks</a>
+        <a href="/notes">Notes</a>
+    </nav>
+
+    <main>
+
+        <section>
+			<h2>Login</h2>
+			<form
+			    action="#"
+			    th:action="@{register}"
+			    th:object="${user}"
+			    method="post"
+			>
+				<label for="username">Username</label>
+				<input type="text" th:field="*{username}" id="username" name="username" placeholder="Username" />
+				<h5 style="color: red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+				    Username Error
+				</h5>
+				
+				<label for="password">Password</label>
+				<input type="password" th:field="*{password}" id="password" name="password" placeholder="Password" />
+				<h5 style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+				    Password Error
+				</h5>
+				
+				<button type="submit">Register</button>
+			</form>
+			<a href="/login">Click here to login if you already have an account.</a>
+        </section>
+
+    </main>
+
+</body>
+</html>

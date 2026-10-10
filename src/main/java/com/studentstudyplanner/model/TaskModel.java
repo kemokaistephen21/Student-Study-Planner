@@ -1,6 +1,6 @@
 package com.studentstudyplanner.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.validation.constraints.*;
 
@@ -11,7 +11,7 @@ public class TaskModel {
 	private String name;
 	
 	@NotNull(message="Due Date is required")
-	private LocalDateTime dueDate;
+	private LocalDate dueDate;
 	
 	@NotBlank(message="Category is required")
 	private String category;
@@ -23,7 +23,7 @@ public class TaskModel {
 	private String courseName;
 
 	public TaskModel(Long id, @NotBlank(message = "Name is required") String name,
-			@NotNull(message = "Due Date is required") LocalDateTime dueDate,
+			@NotNull(message = "Due Date is required") LocalDate dueDate,
 			@NotBlank(message = "Category is required") String category,
 			@NotBlank(message = "Description is required") String description,
 			@NotBlank(message = "Course name is required") String courseName) {
@@ -34,6 +34,13 @@ public class TaskModel {
 		this.category = category;
 		this.description = description;
 		this.courseName = courseName;
+	}
+
+	public TaskModel() {
+		this.name = "";
+		this.dueDate = LocalDate.now();
+		this.category = "";
+		this.courseName = "";
 	}
 
 	public Long getId() {
@@ -52,11 +59,11 @@ public class TaskModel {
 		this.name = name;
 	}
 
-	public LocalDateTime getDueDate() {
+	public LocalDate getDueDate() {
 		return dueDate;
 	}
 
-	public void setDueDate(LocalDateTime dueDate) {
+	public void setDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
 	}
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignments - Student Study Planner</title>
 
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
@@ -29,14 +29,20 @@
             <h2>My Assignments</h2>
             <p>View and manage your upcoming and current assignments.</p>
 
-            <form action="/assignments" method="post">
+            <form th:action="@{/assignments}" th:object="${newAssignment}" method="post">
                 <h3>Add an Assignment</h3>
 
                 <label for="assignmentName">Assignment Name</label>
-                <input type="text" id="assignmentName" name="assignmentName" placeholder="Example: Cloud Computing Discussion">
+                <input type="text" id="name" name="name" placeholder="Example: Cloud Computing Discussion">
 
                 <label for="course">Course</label>
-                <input type="text" id="course" name="course" placeholder="Example: Cloud Computing">
+                <select id="courseName" name="courseName">
+					<option value="" disabled selected>Select a Course</option>
+					<option th:each="c : ${courseList}"
+					        th:value="${c}"
+					        th:text="${c}">
+					</option>
+                </select>
 
                 <label for="dueDate">Due Date</label>
                 <input type="date" id="dueDate" name="dueDate">
@@ -52,32 +58,40 @@
 			<h2 th:if="${assignments.empty}">No Assignments available</h2>
 			<h2 th:if="${not #lists.isEmpty(assignments)}">Assignment List</h2>
 
-			<div th:each="assignment : ${assignments}">
-				<h3 th:text="${assignment.name}">Example Assignment</h3>
-				<p><strong>Course: </strong><span th:text="${assignment.courseName}">Cloud Computing</span></p>
-				<p><strong>Due Date: </strong><span th:text="${assignment.dueDate}">October 10, 2026</span></p>
-				<p><strong>Category: </strong><span th:text="${assignment.category}">Homework</span></p>
+			<div th:each="a : ${assignments}">
+				<h3 th:text="${a.name}">Example Assignment</h3>
+				<p><strong>Course: </strong><span th:text="${a.courseName}">Cloud Computing</span></p>
+				<p><strong>Due Date: </strong><span th:text="${a.dueDate}">October 10, 2026</span></p>
+				<p><strong>Category: </strong><span th:text="${a.category}">Homework</span></p>
 
-				<form action="/assignments/update" method="post">
-					<input type="hidden" name="id" th:value="${assignment.id}">
+				<form th:action="@{/assignments/update}" method="post">
+					<input type="hidden" name="id" th:value="${a.id}">
 
 					<label>Assignment Name</label>
-					<input type="text" name="assignmentName" th:value="${assignment.name}">
+					<input type="text" name="name" th:value="${a.name}">
 
 					<label>Course</label>
-					<input type="text" name="course" th:value="${assignment.courseName}">
+					<select id="courseName" name="courseName">
+						<option value="" disabled selected>Select a Course</option>
+						<option th:each="c : ${courseList}"
+						        th:value="${c}"
+						        th:text="${c}"
+						        th:selected="${c == a.courseName}">
+						</option>
+					</select>
 
 					<label>Due Date</label>
-					<input type="date" name="dueDate" th:value="${#temporals.format(assignment.dueDate, 'yyyy-MM-dd')}">
+					<input type="date" name="dueDate"
+						th:value="${#temporals.format(a.dueDate, 'yyyy-MM-dd')}">
 
 					<label>Category</label>
-					<input type="text" name="category" th:value="${assignment.category}">
+					<input type="text" name="category" th:value="${a.category}">
 
 					<button type="submit">Edit Assignment</button>
 				</form>
 
-				<form action="/assignments/delete" method="post">
-					<input type="hidden" name="id" th:value="${assignment.id}">
+				<form th:action="@{/assignments/delete}" method="post">
+					<input type="hidden" name="id" th:value="${a.id}">
 					<button type="submit">Delete Assignment</button>
 				</form>
 			</div>

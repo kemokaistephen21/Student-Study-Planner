@@ -8,9 +8,9 @@ import com.studentstudyplanner.model.UserModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,13 +19,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements UserDetailsService {
-	@Autowired
-    private UserRepository userRepository; 
-    
+    private final UserRepository userRepository; 
     private final PasswordEncoder passwordEncoder; // added to hash passwords
 
     // two beans are injected into the constructor: UserRepository and PasswordEncoder
-    @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
     	this.userRepository = userRepository;
     	this.passwordEncoder = passwordEncoder;
@@ -41,7 +38,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    	UserEntity userEntity = userRepository.findByLoginName(username);
+    	UserEntity userEntity = userRepository.findByUsername(username).orElse(null);
     	if (userEntity == null) {
     		return null;
     	}
@@ -49,7 +46,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserModel findById(String id) {
-        UserEntity userEntity = userRepository.findById(Long.parseLong(id));
+        UserEntity userEntity = userRepository.findById(Long.parseLong(id)).orElse(null);
         return convertToModel(userEntity);
     }
 
@@ -62,8 +59,13 @@ public class UserService implements UserDetailsService {
         List<UserModel> userModels =  convertToModels(userEntities);
         return userModels;
     }  
+    
+    public boolean usernameExists(String username)
+    {
+    	return userRepository.existsByUsername(username);
+    }
 
-    private List<UserModel> convertToModels(List<UserEntity> userEntities) {
+    public List<UserModel> convertToModels(List<UserEntity> userEntities) {
         List<UserModel> userModels = new ArrayList<>();
         for (UserEntity userEntity : userEntities) {
             userModels.add(convertToModel(userEntity));
@@ -71,7 +73,7 @@ public class UserService implements UserDetailsService {
         return userModels;
     }
  
-    private UserModel convertToModel(UserEntity userEntity) {
+    public UserModel convertToModel(UserEntity userEntity) {
         UserModel userModel = new UserModel();
         userModel.setId(userEntity.getId());
         userModel.setUsername(userEntity.getUsername());
@@ -90,4 +92,17 @@ public class UserService implements UserDetailsService {
 
     } 
    
+    public CustomUserDetails getCurrentUserDetails() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        // Ensure there is an active authentication and it is not an anonymous user
+        if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
+            Object principal = authentication.getPrincipal();
+            
+            if (principal instanceof UserDetails) {
+                return (CustomUserDetails) principal;
+            }
+        }
+        throw new IllegalStateException("No authenticated user found in session");
+    }
 }

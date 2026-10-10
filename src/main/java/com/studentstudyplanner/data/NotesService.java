@@ -70,7 +70,7 @@ public class NotesService implements DataAccessInterface<NoteEntity> {
 		String sql = "SELECT * FROM notes WHERE courseId = ?";
 
 		try {
-			jdbcTemplateObject.query(sql, noteRowMapper, courseId);
+			notes = jdbcTemplateObject.query(sql, noteRowMapper, courseId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -110,8 +110,8 @@ public class NotesService implements DataAccessInterface<NoteEntity> {
 		}
 	}
 	
-	public NoteEntity ModelToEntity(NoteModel model) {
-		List<CourseEntity> coursesResults = coursesService.findByName(model.getCourseName());
+	public NoteEntity ModelToEntity(NoteModel model, Long userId) {
+		List<CourseEntity> coursesResults = coursesService.findByNameAndUserId(model.getCourseName(), userId);
 		
 		if (coursesResults.isEmpty())
 			return null;
@@ -129,6 +129,6 @@ public class NotesService implements DataAccessInterface<NoteEntity> {
 			return null;
 		
 		return new NoteModel(entity.getId(), entity.getTitle(), entity.getCategory(), entity.getContent(),
-				ce.getCode());
+				ce.getName());
 	}
 }

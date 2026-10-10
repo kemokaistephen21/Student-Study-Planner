@@ -4,7 +4,6 @@ import java.util.*;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +70,7 @@ public class TasksService implements DataAccessInterface<TaskEntity> {
 		String sql = "SELECT * FROM tasks WHERE courseId = ?";
 
 		try {
-			jdbcTemplateObject.query(sql, taskRowMapper, courseId);
+			tasks = jdbcTemplateObject.query(sql, taskRowMapper, courseId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -111,8 +110,8 @@ public class TasksService implements DataAccessInterface<TaskEntity> {
 		}
 	}
 	
-	public TaskEntity ModelToEntity(TaskModel model) {
-		List<CourseEntity> coursesResults = coursesService.findByName(model.getCourseName());
+	public TaskEntity ModelToEntity(TaskModel model, Long userId) {
+		List<CourseEntity> coursesResults = coursesService.findByNameAndUserId(model.getCourseName(), userId);
 		
 		if (coursesResults.isEmpty())
 			return null;
@@ -130,6 +129,6 @@ public class TasksService implements DataAccessInterface<TaskEntity> {
 			return null;
 		
 		return new TaskModel(entity.getId(), entity.getName(), entity.getDueDate(), entity.getCategory(),
-				entity.getDescription(), ce.getCode());
+				entity.getDescription(), ce.getName());
 	}
 }

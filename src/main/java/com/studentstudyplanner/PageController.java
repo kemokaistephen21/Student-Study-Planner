@@ -2,17 +2,21 @@ package com.studentstudyplanner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.studentstudyplanner.data.AssignmentService;
 import com.studentstudyplanner.data.CoursesService;
 import com.studentstudyplanner.data.NotesService;
 import com.studentstudyplanner.data.TasksService;
-
+import com.studentstudyplanner.data.UserService;
 import com.studentstudyplanner.data.entity.AssignmentEntity;
 import com.studentstudyplanner.data.entity.CourseEntity;
 import com.studentstudyplanner.data.entity.NoteEntity;
@@ -20,8 +24,13 @@ import com.studentstudyplanner.data.entity.TaskEntity;
 
 import com.studentstudyplanner.model.AssignmentModel;
 import com.studentstudyplanner.model.CourseModel;
+import com.studentstudyplanner.model.CustomUserDetails;
 import com.studentstudyplanner.model.NoteModel;
 import com.studentstudyplanner.model.TaskModel;
+import com.studentstudyplanner.model.UserModel;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class PageController {
@@ -30,54 +39,61 @@ public class PageController {
 	final AssignmentService assignmentsService;
 	final TasksService tasksService;
 	final NotesService notesService;
+	final UserService userService;
 
     PageController(CoursesService coursesService, AssignmentService assignmentsService,
-    		TasksService tasksService, NotesService notesService) {
+    		TasksService tasksService, NotesService notesService, UserService userService) {
         this.coursesService = coursesService;
 		this.assignmentsService = assignmentsService;
 		this.tasksService = tasksService;
 		this.notesService = notesService;
+		this.userService = userService;
     }
 
     @GetMapping("/")
     public String dashboard(Model model) {
-    	List<CourseEntity> ces = coursesService.findAll();
+    	List<CourseEntity> ces = getAllCoursesByCurrentUser();
     	List<CourseModel> cms = new ArrayList<>();
-    	for (CourseEntity entity : ces) 
-		{
-            cms.add(coursesService.EntityToModel(entity));
-        }
-        model.addAttribute("courses", cms);
     	
-    	
-    	List<AssignmentEntity> aes = assignmentsService.findAll();
+    	List<AssignmentEntity> aes = new ArrayList<>();
         List<AssignmentModel> ams = new ArrayList<>();
+    	
+    	List<TaskEntity> tes = new ArrayList<>();
+        List<TaskModel> tms = new ArrayList<>();
+    	
+    	List<NoteEntity> nes = new ArrayList<>();
+        List<NoteModel> nms = new ArrayList<>();
 
-        for (AssignmentEntity entity : aes) 
+    	for (CourseEntity entity : ces)
+    	{
+    		cms.add(coursesService.EntityToModel(entity));
+    		
+    		List<AssignmentEntity> assignmentResults = assignmentsService.findAllByCourseId(entity.getId());
+    		aes.addAll(assignmentResults);
+    		
+    		List<TaskEntity> taskResults = tasksService.findAllByCourseId(entity.getId());
+    		tes.addAll(taskResults);
+    		
+    		List<NoteEntity> noteResults = notesService.findAllByCourseId(entity.getId());
+    		nes.addAll(noteResults);
+    	}
+        model.addAttribute("courses", cms);
+
+        for (AssignmentEntity entity : aes)
         {
             ams.add(assignmentsService.EntityToModel(entity));
         }
         model.addAttribute("assignments", ams);
 
-    	
-    	List<TaskEntity> tes = tasksService.findAll();
-        List<TaskModel> tms = new ArrayList<>();
-
         for (TaskEntity entity : tes) {
             tms.add(tasksService.EntityToModel(entity));
         }
-
         model.addAttribute("tasks", tms);
-
-    	
-    	List<NoteEntity> nes = notesService.findAll();
-        List<NoteModel> nms = new ArrayList<>();
 
         for (NoteEntity entity : nes) 
         {
             nms.add(notesService.EntityToModel(entity));
         }
-
         model.addAttribute("notes", nms);
     	
         return "index";
@@ -86,7 +102,7 @@ public class PageController {
     @GetMapping("/courses")
     public String courses(Model model) 
     {
-        List<CourseEntity> ces = coursesService.findAll();
+        List<CourseEntity> ces = getAllCoursesByCurrentUser();
         List<CourseModel> cms = new ArrayList<>();
 
         for (CourseEntity entity : ces) {
@@ -94,20 +110,19 @@ public class PageController {
         }
 
         model.addAttribute("courses", cms);
+        
+        CourseModel newCourse = new CourseModel();
+        newCourse.setUserId(userService.getCurrentUserDetails().getId());
+        model.addAttribute("newCourse", newCourse);
 
         return "courses";
     }
 
     @PostMapping("/courses")
     public String addCourse
-    (
-        @org.springframework.web.bind.annotation.RequestParam("courseName") String name,
-        @org.springframework.web.bind.annotation.RequestParam("courseCode") String code,
-        @org.springframework.web.bind.annotation.RequestParam("instructor") String instructor
-    )
+    (@Valid @ModelAttribute CourseModel newCourse, BindingResult result)
     {
-        CourseModel model = new CourseModel(null, name, code, instructor, 0L);
-        CourseEntity course = coursesService.ModelToEntity(model);
+        CourseEntity course = coursesService.ModelToEntity(newCourse);
 
         if (course != null) {
             coursesService.create(course);
@@ -118,7 +133,7 @@ public class PageController {
 
     @PostMapping("/courses/delete")
     public String deleteCourse(
-            @org.springframework.web.bind.annotation.RequestParam("id") Long id)
+            @RequestParam("id") Long id)
     {
         CourseEntity course = coursesService.findById(id);
 
@@ -130,22 +145,12 @@ public class PageController {
     }
 
     @PostMapping("/courses/update")
-    public String updateCourse
-    (
-        @org.springframework.web.bind.annotation.RequestParam("id") Long id,
-        @org.springframework.web.bind.annotation.RequestParam("courseName") String name,
-        @org.springframework.web.bind.annotation.RequestParam("courseCode") String code,
-        @org.springframework.web.bind.annotation.RequestParam("instructor") String instructor
-    )
+    public String updateCourse(@Valid @ModelAttribute CourseModel course, BindingResult result)
     {
-        CourseEntity course = coursesService.findById(id);
+        CourseEntity courseEntity = coursesService.ModelToEntity(course);
 
         if (course != null) {
-            course.setName(name);
-            course.setCode(code);
-            course.setInstructor(instructor);
-
-            coursesService.update(course);
+            coursesService.update(courseEntity);
         }
 
         return "redirect:/courses";
@@ -154,43 +159,43 @@ public class PageController {
     @GetMapping("/assignments")
     public String assignments(Model model) 
     {
-        List<AssignmentEntity> aes = assignmentsService.findAll();
+    	List<CourseEntity> ces = getAllCoursesByCurrentUser();
+        List<AssignmentEntity> aes = new ArrayList<>();
         List<AssignmentModel> ams = new ArrayList<>();
+    	
+    	for (CourseEntity entity : ces)
+    	{
+    		List<AssignmentEntity> assignmentResults = assignmentsService.findAllByCourseId(entity.getId());
+    		aes.addAll(assignmentResults);
+    	}
 
         for (AssignmentEntity entity : aes) {
             ams.add(assignmentsService.EntityToModel(entity));
         }
 
         model.addAttribute("assignments", ams);
+        
+        List<String> courseList = ces.stream()
+        							 .map(CourseEntity::getName)
+        							 .collect(Collectors.toList());
+        							 
+        model.addAttribute("courseList", courseList);
+        
+        model.addAttribute("newAssignment", new AssignmentModel());
 
         return "assignments";
     }
 
     @PostMapping("/assignments")
     public String addAssignment
-    (
-        @org.springframework.web.bind.annotation.RequestParam("assignmentName") String name,
-        @org.springframework.web.bind.annotation.RequestParam("course") String courseName,
-        @org.springframework.web.bind.annotation.RequestParam("dueDate") String dueDate,
-        @org.springframework.web.bind.annotation.RequestParam("category") String category
-    )
+    (@Valid @ModelAttribute AssignmentModel newAssignment, BindingResult result)
     {
-        java.time.LocalDateTime dateTime =
-                java.time.LocalDate.parse(dueDate).atStartOfDay();
+        
+    	AssignmentEntity assignmentEntity = assignmentsService.ModelToEntity(newAssignment,
+    			userService.getCurrentUserDetails().getId());
 
-        AssignmentModel model = new AssignmentModel(
-                null,
-                name,
-                category,
-                dateTime,
-                false,
-                courseName
-        );
-
-        AssignmentEntity assignment = assignmentsService.ModelToEntity(model);
-
-        if (assignment != null) {
-            assignmentsService.create(assignment);
+        if (assignmentEntity != null) {
+            assignmentsService.create(assignmentEntity);
         }
 
         return "redirect:/assignments";
@@ -198,7 +203,7 @@ public class PageController {
 
     @PostMapping("/assignments/delete")
     public String deleteAssignment(
-            @org.springframework.web.bind.annotation.RequestParam("id") Long id)
+            @RequestParam("id") Long id)
     {
         AssignmentEntity assignment = assignmentsService.findById(id);
 
@@ -211,25 +216,13 @@ public class PageController {
 
     @PostMapping("/assignments/update")
     public String updateAssignment
-    (
-        @org.springframework.web.bind.annotation.RequestParam("id") Long id,
-        @org.springframework.web.bind.annotation.RequestParam("assignmentName") String name,
-        @org.springframework.web.bind.annotation.RequestParam("course") String courseName,
-        @org.springframework.web.bind.annotation.RequestParam("dueDate") String dueDate,
-        @org.springframework.web.bind.annotation.RequestParam("category") String category
-    )
+    (@Valid @ModelAttribute AssignmentModel assignment, BindingResult result)
     {
-        AssignmentEntity assignment = assignmentsService.findById(id);
+    	AssignmentEntity assignmentEntity = assignmentsService.ModelToEntity(assignment,
+    			userService.getCurrentUserDetails().getId());
 
-        if (assignment != null) {
-            java.time.LocalDateTime dateTime =
-                    java.time.LocalDate.parse(dueDate).atStartOfDay();
-
-            assignment.setName(name);
-            assignment.setDueDate(dateTime);
-            assignment.setCategory(category);
-
-            assignmentsService.update(assignment);
+        if (assignmentEntity != null) {
+            assignmentsService.update(assignmentEntity);
         }
 
         return "redirect:/assignments";
@@ -237,30 +230,12 @@ public class PageController {
 
     @PostMapping("/tasks")
     public String addTask
-    (
-        @org.springframework.web.bind.annotation.RequestParam("taskName") String name,
-        @org.springframework.web.bind.annotation.RequestParam("course") String courseName,
-        @org.springframework.web.bind.annotation.RequestParam("dueDate") String dueDate,
-        @org.springframework.web.bind.annotation.RequestParam("category") String category,
-        @org.springframework.web.bind.annotation.RequestParam("description") String description
-    )
+    (@Valid @ModelAttribute TaskModel newTask, BindingResult result)
     {
-        java.time.LocalDateTime dateTime =
-                java.time.LocalDate.parse(dueDate).atStartOfDay();
+    	TaskEntity taskEntity = tasksService.ModelToEntity(newTask, userService.getCurrentUserDetails().getId());
 
-        TaskModel model = new TaskModel(
-                null,
-                name,
-                dateTime,
-                category,
-                description,
-                courseName
-        );
-
-        TaskEntity task = tasksService.ModelToEntity(model);
-
-        if (task != null) {
-            tasksService.create(task);
+        if (taskEntity != null) {
+            tasksService.create(taskEntity);
         }
 
         return "redirect:/tasks";
@@ -269,40 +244,41 @@ public class PageController {
     @GetMapping("/tasks")
     public String tasks(Model model) 
     {
-        List<TaskEntity> tes = tasksService.findAll();
+    	List<CourseEntity> ces = getAllCoursesByCurrentUser();
+        List<TaskEntity> tes = new ArrayList<>();
         List<TaskModel> tms = new ArrayList<>();
+        
+        for (CourseEntity entity : ces)
+    	{
+    		List<TaskEntity> assignmentResults = tasksService.findAllByCourseId(entity.getId());
+    		tes.addAll(assignmentResults);
+    	}
 
         for (TaskEntity entity : tes) {
             tms.add(tasksService.EntityToModel(entity));
         }
 
         model.addAttribute("tasks", tms);
+        
+        List<String> courseList = ces.stream()
+        							 .map(CourseEntity::getName)
+        							 .collect(Collectors.toList());
+        							 
+        model.addAttribute("courseList", courseList);
+        
+        model.addAttribute("newTask", new TaskModel());
 
         return "tasks";
     }
 
     @PostMapping("/tasks/update")
     public String updateTask
-    (
-        @org.springframework.web.bind.annotation.RequestParam("id") Long id,
-        @org.springframework.web.bind.annotation.RequestParam("taskName") String name,
-        @org.springframework.web.bind.annotation.RequestParam("dueDate") String dueDate,
-        @org.springframework.web.bind.annotation.RequestParam("category") String category,
-        @org.springframework.web.bind.annotation.RequestParam("description") String description
-    )
+    (@Valid @ModelAttribute TaskModel task, BindingResult result)
     {
-        TaskEntity task = tasksService.findById(id);
+        TaskEntity taskEntity = tasksService.ModelToEntity(task, userService.getCurrentUserDetails().getId());
 
-        if (task != null) {
-            java.time.LocalDateTime dateTime =
-                    java.time.LocalDate.parse(dueDate).atStartOfDay();
-
-            task.setName(name);
-            task.setDueDate(dateTime);
-            task.setCategory(category);
-            task.setDescription(description);
-
-            tasksService.update(task);
+        if (taskEntity != null) {
+            tasksService.update(taskEntity);
         }
 
         return "redirect:/tasks";
@@ -310,7 +286,7 @@ public class PageController {
 
     @PostMapping("/tasks/delete")
     public String deleteTask(
-            @org.springframework.web.bind.annotation.RequestParam("id") Long id)
+            @RequestParam("id") Long id)
     {
         TaskEntity task = tasksService.findById(id);
 
@@ -324,55 +300,52 @@ public class PageController {
     @GetMapping("/notes")
     public String notes(Model model) 
     {
-        List<NoteEntity> nes = notesService.findAll();
+    	List<CourseEntity> ces = getAllCoursesByCurrentUser();
+        List<NoteEntity> nes = new ArrayList<>();
         List<NoteModel> nms = new ArrayList<>();
+        
+        for (CourseEntity entity : ces)
+    	{
+    		List<NoteEntity> assignmentResults = notesService.findAllByCourseId(entity.getId());
+    		nes.addAll(assignmentResults);
+    	}
 
         for (NoteEntity entity : nes) {
             nms.add(notesService.EntityToModel(entity));
         }
 
         model.addAttribute("notes", nms);
+        
+        List<String> courseList = ces.stream()
+        							 .map(CourseEntity::getName)
+        							 .collect(Collectors.toList());
+        							 
+        model.addAttribute("courseList", courseList);
+        
+        model.addAttribute("newNote", new NoteModel());
 
         return "notes";
     }
     
     @PostMapping("/notes")
-    public String addNote
-    (
-        @org.springframework.web.bind.annotation.RequestParam("noteTitle") String title,
-        @org.springframework.web.bind.annotation.RequestParam("course") String courseName,
-        @org.springframework.web.bind.annotation.RequestParam("category") String category,
-        @org.springframework.web.bind.annotation.RequestParam("noteContent") String content
-    ) 
+    public String addNote(@Valid @ModelAttribute NoteModel newNote, BindingResult result) 
     {
+        NoteEntity noteEntity = notesService.ModelToEntity(newNote, userService.getCurrentUserDetails().getId());
 
-        NoteModel model = new NoteModel(null, title, category, content, courseName);
-        NoteEntity note = notesService.ModelToEntity(model);
-
-        if (note != null) {
-            notesService.create(note);
+        if (noteEntity != null) {
+            notesService.create(noteEntity);
         }
 
         return "redirect:/notes";
     }
 
     @PostMapping("/notes/update")
-    public String updateNote
-    (
-        @org.springframework.web.bind.annotation.RequestParam("id") Long id,
-        @org.springframework.web.bind.annotation.RequestParam("title") String title,
-        @org.springframework.web.bind.annotation.RequestParam("category") String category,
-        @org.springframework.web.bind.annotation.RequestParam("content") String content
-    )
+    public String updateNote(@Valid @ModelAttribute NoteModel newNote, BindingResult result)
     {
-        NoteEntity note = notesService.findById(id);
+        NoteEntity noteEntity = notesService.ModelToEntity(newNote, userService.getCurrentUserDetails().getId());
 
-        if (note != null) {
-            note.setTitle(title);
-            note.setCategory(category);
-            note.setContent(content);
-
-            notesService.update(note);
+        if (noteEntity != null) {
+            notesService.update(noteEntity);
         }
 
         return "redirect:/notes";
@@ -380,7 +353,7 @@ public class PageController {
 
     @PostMapping("/notes/delete")
     public String deleteNote(
-            @org.springframework.web.bind.annotation.RequestParam("id") Long id)
+            @RequestParam("id") Long id)
     {
         NoteEntity note = notesService.findById(id);
 
@@ -389,5 +362,44 @@ public class PageController {
         }
 
         return "redirect:/notes";
+    }
+    
+    @GetMapping("/login")
+    public String showLoginForm(Model model) {
+        model.addAttribute("user", new UserModel());
+        model.addAttribute("title", "Login");
+        return "login";
+    }
+ 
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+    	session.invalidate();
+    	return "redirect:/login";
+    }
+    
+    @GetMapping("/register")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("title", "Register New Account");
+        model.addAttribute("user", new UserModel());
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute UserModel user, Model model) {
+        if (userService.usernameExists(user.getUsername())) {
+            model.addAttribute("error", "User already exists!");
+            model.addAttribute("user", user);
+            return "register";
+        }
+
+        userService.save(user);
+        return "redirect:/login";
+    }
+    
+    // Private helper method to get courses by the current logged-in user
+    private List<CourseEntity> getAllCoursesByCurrentUser()
+    {
+    	CustomUserDetails ud = userService.getCurrentUserDetails();
+    	return coursesService.findAllByUserId(ud.getId());
     }
 }

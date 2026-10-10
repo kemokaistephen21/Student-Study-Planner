@@ -28,6 +28,13 @@ public class CourseModel {
 		this.userId = userId;
 	}
 
+	public CourseModel() {
+		this.name = "";
+		this.code = "";
+		this.instructor = "";
+		this.userId = 0L;
+	}
+
 	public Long getId() {
 		return id;
 	}

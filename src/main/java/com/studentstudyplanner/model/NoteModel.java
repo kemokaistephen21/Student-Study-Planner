@@ -29,6 +29,13 @@ public class NoteModel {
 		this.courseName = courseName;
 	}
 
+	public NoteModel() {
+		this.title = "";
+		this.category = "";
+		this.content = "";
+		this.courseName = "";
+	}
+
 	public Long getId() {
 		return id;
 	}

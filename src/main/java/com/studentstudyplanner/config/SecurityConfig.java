@@ -18,12 +18,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Disables csrf and authorizes all requests; login protection is not yet implemented at this stage
     	http
-	        .csrf(csrf -> csrf.disable())
-	        .authorizeHttpRequests(auth -> auth
-	            .anyRequest().permitAll()
-	        );
+    		.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                .requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll()
+                .anyRequest().authenticated())
+            .formLogin(loginForm -> loginForm
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error=true")
+                .permitAll())
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login"));
         
         return http.build();
     }

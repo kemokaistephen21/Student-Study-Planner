@@ -44,10 +44,10 @@ public class CoursesService implements DataAccessInterface<CourseEntity> {
 		}
 	}
 	
-	public List<CourseEntity> findByName(String name) {
+	public List<CourseEntity> findByNameAndUserId(String name, Long userId) {
 		try {
-			String sql = "SELECT * FROM courses WHERE name = ?";
-			return jdbcTemplateObject.query(sql, courseRowMapper, name);
+			String sql = "SELECT * FROM courses WHERE name = ? AND userId = ?";
+			return jdbcTemplateObject.query(sql, courseRowMapper, name, userId);
 		} catch(Exception e) {
 			e.printStackTrace();
 			return null;
@@ -67,8 +67,6 @@ public class CoursesService implements DataAccessInterface<CourseEntity> {
 	}
 	
 	public List<CourseEntity> findAllByUserId(long userId) {
-		List<CourseEntity> courses = new ArrayList<CourseEntity>();
-		
 		String sql = "SELECT * FROM courses WHERE userId = ?";
 
 		try {
