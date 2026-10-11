@@ -8,7 +8,7 @@ USE `323milestone`;
 
 -- Users Table
 CREATE TABLE IF NOT EXISTS `users` (
-    `id` BIGINT NOT NULL,
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) DEFAULT NULL,
     `password` VARCHAR(255) DEFAULT NULL,
     PRIMARY KEY (`id`)
