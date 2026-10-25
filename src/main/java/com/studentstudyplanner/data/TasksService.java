@@ -255,5 +255,3 @@ public class TasksService implements DataAccessInterface<TaskEntity> {
     }
 }
 
-	}
-}
